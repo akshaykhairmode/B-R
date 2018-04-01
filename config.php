@@ -8,7 +8,8 @@ define("DS" , DIRECTORY_SEPARATOR);
 
 define("ABSPATH",$_SERVER['DOCUMENT_ROOT']."/".APPNAME);
 
-define("MAIN" , "http://localhost/database");
+//Path where the app is copied
+define("MAIN" , "http://localhost/".APPNAME);
 
 define("hostname" , "localhost");
 
@@ -16,7 +17,7 @@ define("username" , "root");
 
 define("password" , "");
 
-define("database" , "ciltest_cqms");
+define("database" , "");
 
 define("NAME","Akshay");
 
