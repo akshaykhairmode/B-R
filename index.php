@@ -22,11 +22,13 @@ $database = new Backup;
 	<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
 
 	<script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js"></script>
+
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap4.min.css">
 </head>
 <body>
 
   <div class="container-fluid text-center">
-    <h1 class="text-success">Connected to <?php echo database; ?></h1> 
+    <h1 class="text-success">Connected to <?php echo database; ?></h1>
   </div>
 
 	<div class="container">
@@ -37,6 +39,7 @@ $database = new Backup;
 							<thead>
 								<tr>
 									<th>Tables</th>
+									<th>Rows(Approx)</th>
 									<th class="text-center">Structure</th>
 									<th class="text-center">Structure + Data</th>
 								</tr>
@@ -44,11 +47,12 @@ $database = new Backup;
 							<tbody>
 								<?php foreach($database->getAllTables() as $key => $table_name): ?>
 									<tr>
-										<td class="text-left"><?php echo $table_name; ?></td>
+										<td class="text-left"><?php echo $table_name['TABLE_NAME']; ?></td>
+										<td class="text-center"><?php echo $table_name['TABLE_ROWS']; ?></td>
 										<td class="text-center">
-											<input value="<?php echo $table_name; ?>" class="cb_<?php echo $key; ?>" type="checkbox" name="structure[]"></td>
+											<input value="<?php echo $table_name['TABLE_NAME']; ?>" class="cb_<?php echo $key; ?>" type="checkbox" name="structure[]"></td>
 										<td class="text-center">
-											<input value="<?php echo $table_name; ?>" class="cb_<?php echo $key; ?>" type="checkbox" name="structure_data[]"></td>
+											<input value="<?php echo $table_name['TABLE_NAME']; ?>" class="cb_<?php echo $key; ?>" type="checkbox" name="structure_data[]"></td>
 									</tr>
 								<?php endforeach; ?>
 							</tbody>
@@ -64,14 +68,19 @@ $database = new Backup;
 	<div class="resp"></div>
 	<script type="text/javascript">
 		$(document).ready(function() {
-		    var table = $('.table').DataTable();
+		    var table = $('.table').DataTable({
+		    	"columnDefs": [{
+					"targets": [2,3],
+					"orderable": false
+					}]
+		    });
 
 		    //Check Uncheck checkboxes as we neeed to only select one checkbox from a row
-		    $('[class^="cb"]').click(function(){
-		    	var cl = $(this).attr('class');
-		    	$("."+cl).prop('checked', false);
-		    	$(this).prop('checked', true);
-		    });
+		    // $('[class^="cb"]').click(function(){
+		    // 	var cl = $(this).attr('class');
+		    // 	$("."+cl).prop('checked', false);
+		    // 	$(this).prop('checked', true);
+		    // });
 
 		    $("#tForm_submit").click(function(e){
 		    	e.preventDefault();
@@ -110,7 +119,7 @@ $database = new Backup;
 		    		url : './ajax/install.php',
 		    		type: 'POST',
 		    		success:function(response){
-		    			$(".resp").html(response);
+		    			console.log(response);
 		    		}
 		    	});
 		    });

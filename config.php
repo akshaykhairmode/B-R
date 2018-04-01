@@ -20,19 +20,10 @@ define("database" , "ciltest_cqms");
 
 define("NAME","Akshay");
 
-// define("JS", MAIN."/js/");
-
-// define("AJAX", __DIR__.DS."ajax".DS);
-
-// define("CLASSES", __DIR__.DS."classes".DS);
-
-// define("STORAGE" , __DIR__.DS."storage".DS);
-
-// define("VIEW" , ".".DS."views".DS);
-
 
 function mdie() {
-  die(mysql_error());
+  // die(mysql_error());
+  die("MYSQL ERROR OCCURED");
 }
 
 function pp($content) {

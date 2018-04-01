@@ -19,13 +19,19 @@ class Backup extends Connection {
 
       $return = array();
 
-      $result = $this->db->query("SHOW TABLES");
+      $query = "SELECT 
+                    TABLE_NAME, 
+                    TABLE_ROWS 
+                FROM 
+                    `information_schema`.`tables` 
+                WHERE 
+                    `table_schema` = '".database."'";
+
+      $result = $this->db->query($query);
+
 
       if($result->num_rows > 0) {
-        while ($row = $result->fetch_row()) {
-          array_push($return, $row[0]);
-        }
-
+        $return = $result->fetch_all(MYSQL_ASSOC);
       } else {
         die("No Tables Found");
       }
@@ -56,6 +62,8 @@ class Backup extends Connection {
   }
 
   private function parseStructure ($tables) {
+
+      $tables = array_unique($tables);
 
       foreach ($tables as $table_name) {
         
@@ -113,6 +121,8 @@ class Backup extends Connection {
   public function backup ($d1,$d2) {
 
     $this->parseStructure(array_merge($d1,$d2))->exportData($d2);
+
+    echo "Backup Complete";
 
   }
 

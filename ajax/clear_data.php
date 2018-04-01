@@ -10,3 +10,4 @@ function empty_folder ($path) {
 }
 
 empty_folder("../storage/*");
+empty_folder("../storage/extract/*");
