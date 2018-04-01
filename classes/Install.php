@@ -19,15 +19,29 @@ class Install extends Connection {
         return $this;
     }
 
-    private function renameTable () {
+    private function createTable($arr){
 
+      $new_name = $arr['filename'] . "_BR_" . NAME . "_" . strtotime("NOW");
+
+      $rename_query = "RENAME TABLE ".$arr['filename'] . " TO ".$new_name;
+
+      $this->db->query($rename_query) or mdie();
+      
+      $this->db->query($arr['content']) or mdie();
+
+      return $this;
     }
 
     private function readStructure() {
 
         $structure = unserialize($this->structure_data);
-        foreach ($structure as $key => $value) {
-            
+        foreach ($structure as $value) {
+          
+            $table_name = $value['filename'];
+            $create_table = $value['content'];
+
+            $this->createTable($value);
+
         }
 
     }

@@ -22,7 +22,6 @@ class Backup extends Connection {
       $result = $this->db->query("SHOW TABLES");
 
       if($result->num_rows > 0) {
-        echo "<pre>";
         while ($row = $result->fetch_row()) {
           array_push($return, $row[0]);
         }

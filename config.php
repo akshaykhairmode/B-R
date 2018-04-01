@@ -18,6 +18,8 @@ define("password" , "");
 
 define("database" , "ciltest_cqms");
 
+define("NAME","Akshay");
+
 // define("JS", MAIN."/js/");
 
 // define("AJAX", __DIR__.DS."ajax".DS);
