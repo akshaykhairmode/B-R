@@ -1,9 +1,0 @@
-CREATE TABLE `cqms_category_master` (
-  `category_code` int(4) NOT NULL AUTO_INCREMENT,
-  `category_name` varchar(255) NOT NULL,
-  `category_description` text NOT NULL,
-  `category_added_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `category_status` enum('Y','N') NOT NULL,
-  `is_industrial` varchar(1) NOT NULL DEFAULT 'N',
-  PRIMARY KEY (`category_code`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=latin1

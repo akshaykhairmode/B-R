@@ -1,123 +1,121 @@
-<?php
-/*
-Author :- Akshay Khairmode
-*/
-namespace DB_INIT;
+<?php 
+require "./config.php";
+require "./classes/Backup.php";
 
-require './functions.php';// Used for debugging purpose.
-use Func as F;
-
-class Database {
-
-  private $config_path = "config.json";
-
-  private $hostname,$db_user,$db_password,$database,$tables;
-
-  public function __construct() {
-
-      $file_content = file_get_contents($this->config_path);
-
-      $parse_file = json_decode($file_content,true);
-
-      if(!$parse_file) {
-        die("Could Not read config file");
-      }
-
-      //Initializing
-      $config = $parse_file['config'];
-      $this->tables = $parse_file['tables'];
-      //End
-
-      mysql_connect($config['host'],$config['username'],$config['password']);
-      mysql_select_db($config['database']) or F\mdie();
-
-  }
-
-  private function getTableBoth () {//Returns the tables which need both structure and data
-
-    $return = array();
-
-    foreach ($this->tables as $table_name => $status) {
-      if ($status == true) {
-        array_push($return, $table_name);
-      }
-    }
-
-    return $return;
-
-  }
-
-
-  private function createFileStructure ($filename,$content) {//Insert structure of each file.
-
-    $path = "./storage/structure/".$filename.".txt";
-
-    $myfile = fopen($path, "w") or die("Unable to open file!");
-    fwrite($myfile, $content);
-    fclose($myfile);
-
-  }
-
-  private function createFileFull () {
-
-  }
-
-  private function parseStructure () {
-
-      foreach ($this->tables as $table_name => $status) {
-        
-        $query_fire = mysql_query("SHOW CREATE TABLE ".$table_name) or F\mdie();
-
-        $res = mysql_fetch_assoc($query_fire);
-
-        $this->createFileStructure($res['Table'],$res['Create Table']);
-
-      }
-
-  }
-
-  private function parseData ($table_name) {
-
-      $filename = $table_name.".csv";
-
-      echo $query = "SELECT * INTO OUTFILE \".".DIRECTORY_SEPARATOR ."storage".DIRECTORY_SEPARATOR ."full".DIRECTORY_SEPARATOR ."test.csv\"\n"
-      . "FIELDS TERMINATED BY \',\' OPTIONALLY ENCLOSED BY \'\"\'\n"
-      . "LINES TERMINATED BY \"\\n\"\n"
-      . "FROM cqms_escalation_master";
-
-      // echo $query = "SELECT * INTO OUTFILE \"./storage/full/test.csv\"\"\n"
-      // . "FIELDS TERMINATED BY \',\' OPTIONALLY ENCLOSED BY \'\"\'\n"
-      // . "LINES TERMINATED BY \"\\n\"\n"
-      // . "FROM ".$table_name;
-
-      // $query_fire = mysql_query($query) or F\mdie();
-
-  }
-
-  public function install () {
-
-  }
-
-  public function backup () {
-
-    $this->parseStructure();//Creates txt files containing the structure code
-
-    mysql_query("START TRANSACTION");
-
-    foreach ($this->getTableBoth() as $table_name) {
-        $this->parseData($table_name);
-    }
-
-    mysql_query("COMMIT");
-    
-  }
-
-}
-
-
-;
-
-$obj = new Database;
-$obj->backup();
+$database = new Backup;
 
 ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Database B&R</title>
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+	<!-- jQuery library -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<!-- Popper JS -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+	<!-- Latest compiled JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+	<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+
+	<script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js"></script>
+</head>
+<body>
+
+  <div class="container-fluid text-center">
+    <h1 class="text-success">Connected to <?php echo database; ?></h1> 
+  </div>
+
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<form name="tForm" id="tForm" method="post" accept-charset="utf-8">
+						<table class="table table-striped" >
+							<thead>
+								<tr>
+									<th>Tables</th>
+									<th class="text-center">Structure</th>
+									<th class="text-center">Structure + Data</th>
+								</tr>
+							</thead>
+							<tbody>
+								<?php foreach($database->getAllTables() as $key => $table_name): ?>
+									<tr>
+										<td class="text-left"><?php echo $table_name; ?></td>
+										<td class="text-center">
+											<input value="<?php echo $table_name; ?>" class="cb_<?php echo $key; ?>" type="checkbox" name="structure[]"></td>
+										<td class="text-center">
+											<input value="<?php echo $table_name; ?>" class="cb_<?php echo $key; ?>" type="checkbox" name="structure_data[]"></td>
+									</tr>
+								<?php endforeach; ?>
+							</tbody>
+						</table>
+					<input type="submit" name="tForm_submit" id="tForm_submit" class="btn btn-primary" value="Backup Tables">
+					<input type="button" name="clear_data" id="clear_data" class="btn btn-danger" value="Clear All data">
+					<input type="button" name="restore" id="restore" class="btn btn-info" value="Restore Old Data">
+					<h5 class="label text-danger mt-2">Selected Tables will replace old ones during backup. Triggers are not included</h5>
+				</form>
+			</div>
+		</div>
+	</div>
+	<div class="resp"></div>
+	<script type="text/javascript">
+		$(document).ready(function() {
+		    var table = $('.table').DataTable();
+
+		    //Check Uncheck checkboxes as we neeed to only select one checkbox from a row
+		    $('[class^="cb"]').click(function(){
+		    	var cl = $(this).attr('class');
+		    	$("."+cl).prop('checked', false);
+		    	$(this).prop('checked', true);
+		    });
+
+		    $("#tForm_submit").click(function(e){
+		    	e.preventDefault();
+
+		    	var data = table.$('input').serialize();
+
+		    	$.ajax({
+		    		url : './ajax/submit_tables.php',
+		    		type: 'POST',
+		    		data:{
+		    			form_data : data
+		    		},
+		    		success:function(response){
+		    			alert(response);
+		    		}
+		    	});
+
+		    });
+
+		    $("#clear_data").click(function(){
+
+		    	if(confirm("are you sure?")) {
+			    	$.ajax({
+			    		url : './ajax/clear_data.php',
+			    		type: 'POST',
+			    		success:function(response){
+			    			alert("Cleared");
+			    		}
+			    	});
+		    	}
+
+		    });
+
+		    $("#restore").click(function(){
+		    	$.ajax({
+		    		url : './ajax/install.php',
+		    		type: 'POST',
+		    		success:function(response){
+		    			$(".resp").html(response);
+		    		}
+		    	});
+		    });
+
+		});
+	</script>
+</body>
+</html>

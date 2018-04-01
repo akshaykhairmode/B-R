@@ -1,9 +1,0 @@
-CREATE TABLE `cqms_channel_master` (
-  `cID` int(11) NOT NULL AUTO_INCREMENT,
-  `channel_code` varchar(8) NOT NULL,
-  `channel_name` varchar(128) NOT NULL,
-  `channel_description` text NOT NULL,
-  `added_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`cID`),
-  UNIQUE KEY `branch_code` (`channel_code`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1
