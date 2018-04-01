@@ -119,7 +119,7 @@ $database = new Backup;
 		    		url : './ajax/install.php',
 		    		type: 'POST',
 		    		success:function(response){
-		    			console.log(response);
+		    			alert(response);
 		    		}
 		    	});
 		    });
