@@ -101,7 +101,7 @@ class Backup extends Connection {
             $query = "SELECT * INTO OUTFILE \"$path\"\n"
             . "FIELDS TERMINATED BY \",\" OPTIONALLY ENCLOSED BY '\"' \n"
             . "LINES TERMINATED BY \"\\n\"\n"
-            . "FROM cqms_escalation_master";
+            . "FROM ".$table_name;
 
             $query_fire = $this->db->query($query) or mdie();
 

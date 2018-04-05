@@ -2,14 +2,14 @@
 
 //Akshay Khairmode
 
-define("APPNAME","database");
+define("APPNAME","YOUR_APP_NAME");//Change this according to the folder name you have copied to
 
 define("DS" , DIRECTORY_SEPARATOR);
 
 define("ABSPATH",$_SERVER['DOCUMENT_ROOT']."/".APPNAME);
 
 //Path where the app is copied
-define("MAIN" , "http://localhost/".APPNAME);
+define("MAIN" , "http://localhost/".APPNAME);//Add IP instead of localhost if on server
 
 define("hostname" , "localhost");
 
@@ -19,7 +19,7 @@ define("password" , "");
 
 define("database" , "");
 
-define("NAME","Akshay");
+define("NAME","YOUR_NAME");
 
 
 function mdie() {
